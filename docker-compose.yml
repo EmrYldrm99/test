@@ -1,0 +1,42 @@
+services:
+  database:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+  web:
+    image: php:8.3-apache
+    volumes:
+      - ./my_test_app:/var/www/html
+      - ./my_test_app/apache2.conf:/etc/apache2/apache2.conf
+      - ./my_test_app/gulpfile.js:/var/www/html/gulpfile.js
+      - ./my_test_app/package.json:/var/www/html/package.json
+      - ./my_test_app/node_modules:/var/www/html/node_modules
+    ports:
+      - 8080:80
+    command: >
+      bash -c "apt-get update && \ apt-get install -y libicu-dev libzip-dev && \ apt-get install -y nodejs npm && \ npm install --global gulp-cli && \ cd /var/www/html && \ npm install && \ docker-php-ext-install intl zip mysqli pdo pdo_mysql && \ a2enmod rewrite && \ apache2-foreground"
+    depends_on:
+      - database
+    environment:
+      DB_HOST: database
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.0
+    ports:
+      - 8083:80
+    depends_on:
+      - database
+    environment:
+      PMA_HOST: database
+
+volumes:
+  db_data:
