@@ -27,6 +27,9 @@ class RequestsController extends AppController
 
     public function overview()
     {
+        if ($this->request->is('post')) {
+            debug($this->request->getData());
+        }
         $requests = $this->Requests->find('all');
         $this->set(compact('requests'));
     }
@@ -46,7 +49,6 @@ class RequestsController extends AppController
         $request = $this->Requests->newEmptyEntity();
         $this->set(compact('request'));
     }
-
 
 
 
