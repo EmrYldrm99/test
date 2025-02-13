@@ -11,3 +11,13 @@ services:
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
       - ./mosquitto/certs:/mosquitto/certs
+
+
+# Root CA erstellen
+#openssl genpkey -algorithm RSA -out ca.key
+# openssl req -x509 -new -nodes -key ca.key -sha256 -days 365 -out ca.crt -subj "/CN=MQTT-CA"
+
+# Server-Zertifikat erstellen
+# openssl genpkey -algorithm RSA -out server.key
+# openssl req -new -key server.key -out server.csr -subj "/CN=localhost"
+# openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -sha256
